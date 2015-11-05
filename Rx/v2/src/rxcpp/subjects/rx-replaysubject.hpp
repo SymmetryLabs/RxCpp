@@ -171,6 +171,14 @@ public:
         });
         return s.get_coordinator().in(observable);
     }
+
+    observable<T> get_nonreplay_observable() const {
+        auto keepAlive = s;
+        auto observable = make_observable_dynamic<T>([=](subscriber<T> o){
+            keepAlive.add(keepAlive.get_subscriber(), std::move(o));
+        });
+        return s.get_coordinator().in(observable);
+    }
 };
 
 }
