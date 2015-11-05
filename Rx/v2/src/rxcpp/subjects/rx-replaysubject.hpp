@@ -84,6 +84,13 @@ class replay_observer : public detail::multicast_observer<T>
             std::unique_lock<std::mutex> guard(lock);
             return values;
         }
+        void clear() {
+            std::unique_lock<std::mutex> guard(lock);
+            values.clear();
+            if (!period.empty()) {
+                time_points.clear();
+            }
+        }
     };
 
     std::shared_ptr<replay_observer_state> state;
@@ -102,6 +109,10 @@ public:
 
     std::list<T> get_values() const {
         return state->get();
+    }
+
+    void clear_values() {
+        state->clear();
     }
 
     coordinator_type& get_coordinator() const {
@@ -154,6 +165,10 @@ public:
 
     std::list<T> get_values() const {
         return s.get_values();
+    }
+
+    void clear_values() {
+        s.clear_values();
     }
 
     subscriber<T> get_subscriber() const {
